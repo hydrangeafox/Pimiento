@@ -1,4 +1,5 @@
 import FluentSQLite
+import MagickWand
 
 final class Photo: SQLiteModel {
   var id:       Int?
@@ -17,6 +18,14 @@ final class Photo: SQLiteModel {
   convenience init?(file:File) {
     guard let digest = file.data.digest else { return nil }
     self.init(digest:digest, filename:file.filename)
+  }
+  func wand() -> ImageWand? {
+    return ImageWand(filePath:self.location.path)
+  }
+  func packet() -> DownloadableContent {
+    return DownloadableContent(
+      location:self.location, filename:self.filename
+    )
   }
 }
 

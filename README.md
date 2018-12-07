@@ -1,20 +1,31 @@
-<p align="center">
-    <img src="https://user-images.githubusercontent.com/1342803/36623515-7293b4ec-18d3-11e8-85ab-4e2f8fb38fbd.png" width="320" alt="API Template">
-    <br>
-    <br>
-    <a href="http://docs.vapor.codes/3.0/">
-        <img src="http://img.shields.io/badge/read_the-docs-2196f3.svg" alt="Documentation">
-    </a>
-    <a href="http://vapor.team">
-        <img src="http://vapor.team/badge.svg" alt="Slack Team">
-    </a>
-    <a href="LICENSE">
-        <img src="http://img.shields.io/badge/license-MIT-brightgreen.svg" alt="MIT License">
-    </a>
-    <a href="https://circleci.com/gh/vapor/api-template">
-        <img src="https://circleci.com/gh/vapor/api-template.svg?style=shield" alt="Continuous Integration">
-    </a>
-    <a href="https://swift.org">
-        <img src="http://img.shields.io/badge/swift-4.1-brightgreen.svg" alt="Swift 4.1">
-    </a>
-</center>
+# Pimient
+
+A photo sharing service on Vapor/Swift
+
+## Build
+
+Replace `-Xswiftc` with `-Xcc=...` at _Building and Testing_ >
+[Mac OSX](https://github.com/naithar/MagickWand#mac-osx-1).
+
+```bash
+$ export BUILD_OPTS=-Xlinker=-L/usr/local/opt/imagemagick\@6/lib\
+\ -Xcc=-I/usr/local/opt/imagemagick\@6/include/ImageMagick-6\
+\ -Xcc=-DMAGICKCORE_HDRI_ENABLE=0\
+\ -Xcc=-DMAGICKCORE_QUANTUM_DEPTH=16
+$ swift build $BUILD_OPTS
+```
+
+## Test
+
+```bash
+$ vapor run
+
+$ pushd ~/Desktop
+$ curl --include --request POST --form image=@$HOME/Pictures/fox.jpg \
+  http://localhost:8080/photos
+$ curl --silent --remote-name --remote-header-name \
+  http://localhost:8080/photos/1/download
+$ curl --silent --output 1.png --header accept:\ image/png \
+  http://localhost:8080/photos/1
+$ popd
+```
