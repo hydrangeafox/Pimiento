@@ -16,7 +16,7 @@ final class PhotoCollection: RouteCollection {
     }
     router.get(Int.parameter) { req -> Future<ImageWand> in
       let id = try req.parameters.next(Int.self)
-      return try Photo.find(id, on:req).map(to:ImageWand.self) {
+      return Photo.find(id, on:req).map(to:ImageWand.self) {
         guard let photo = $0 else { throw Abort(.notFound) }
         guard let wand  = photo.wand() else {
           throw Abort(.internalServerError)
@@ -32,7 +32,7 @@ final class PhotoCollection: RouteCollection {
     router.get(Int.parameter,"download") {
                req -> Future<DownloadableContent> in
       let id = try req.parameters.next(Int.self)
-      return try Photo.find(id, on:req).map(to:DownloadableContent.self) {
+      return Photo.find(id, on:req).map(to:DownloadableContent.self) {
         guard let content = $0?.packet() else { throw Abort(.notFound) }
         return content
       }

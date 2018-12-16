@@ -15,7 +15,7 @@ extension ImageWand: ResponseEncodable {
       throw Abort(.internalServerError)
     }
     return Future.map(on:req) {
-      req.makeResponse(data, as:contentType)
+      req.response(data, as:contentType)
     }
   }
 }

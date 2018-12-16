@@ -19,7 +19,7 @@ extension DownloadableContent: ResponseEncodable {
     }
     return Future.map(on:req) {
       let reader = try req.fileio().chunkedStream(file:self.location.path)
-      let res    = req.makeResponse(reader, as:contentType)
+      let res    = req.response(reader, as:contentType)
       res.http.headers.replaceOrAdd(
         name:.contentDisposition, value:self.contentDisposition
       )
