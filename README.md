@@ -27,5 +27,8 @@ $ curl --silent --remote-name --remote-header-name \
   http://localhost:8080/photos/1/download
 $ curl --silent --output 1.png --header accept:\ image/png \
   http://localhost:8080/photos/1
+$ curl --include --request POST \
+  --header Authorization:\ Basic\ `echo -n demifox:topaz | base64` \
+  http://localhost:8080/auth
 $ popd
 ```
