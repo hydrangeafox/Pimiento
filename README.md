@@ -30,5 +30,10 @@ $ curl --silent --output 1.png --header accept:\ image/png \
 $ curl --include --request POST \
   --header Authorization:\ Basic\ `echo -n demifox:topaz | base64` \
   http://localhost:8080/auth
+65178F78-427E-402E-A4F1-C18004E7AB1B
+$ curl --include \
+  --header accept:\ image/png \
+  --header Authorization:\ Bearer\ 65178F78-427E-402E-A4F1-C18004E7AB1B \
+  http://localhost:8080/photos/1
 $ popd
 ```

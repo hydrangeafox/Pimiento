@@ -16,10 +16,17 @@ public func routes(_ router: Router) throws {
 
     // Endpoint for Basic Authentication
     let basic = User.basicAuthMiddleware(using:BCryptDigest())
-    router.grouped(basic).post("auth") { req -> String in
+    router.grouped(basic).post("auth") { req -> Future<String> in
       let user = try req.requireAuthenticated(User.self)
-      return "Hello, \(user.name)!"
+      guard let token = UserToken(user:user) else {
+        throw Abort(.internalServerError)
+      }
+      return token.save(on:req).map(to:String.self) { $0.content }
     }
 
-    try router.grouped("photos").register(collection:PhotoCollection())
+    // Endpoint for our main contents
+    let token    = User.tokenAuthMiddleware()
+    let guardian = User.guardAuthMiddleware()
+    try router.grouped("photos").grouped(token,guardian)
+        .register(collection:PhotoCollection())
 }

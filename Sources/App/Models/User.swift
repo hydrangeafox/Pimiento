@@ -27,4 +27,8 @@ extension User: PasswordAuthenticatable {
   }
 }
 
+extension User: TokenAuthenticatable {
+  typealias TokenType = UserToken
+}
+
 extension User: Migration { }
