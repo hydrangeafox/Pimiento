@@ -24,9 +24,18 @@ public func routes(_ router: Router) throws {
       return token.save(on:req).map(to:String.self) { $0.content }
     }
 
+    // Endpoint for Bearer Authentication
+    let bearer = User.tokenAuthMiddleware()
+    router.grouped(bearer).delete("auth") { req -> Future<HTTPStatus> in
+      let token = try req.requireAuthenticated(User.TokenType.self)
+      let _     = try req.requireAuthenticated(User.self)
+      try req.unauthenticate(User.self)
+      try req.unauthenticate(User.TokenType.self)
+      return token.delete(force:true, on:req).transform(to:.noContent)
+    }
+
     // Endpoint for our main contents
-    let token    = User.tokenAuthMiddleware()
     let guardian = User.guardAuthMiddleware()
-    try router.grouped("photos").grouped(token,guardian)
+    try router.grouped("photos").grouped(bearer,guardian)
         .register(collection:PhotoCollection())
 }
