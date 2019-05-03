@@ -29,6 +29,14 @@ extension User: PasswordAuthenticatable {
 
 extension User: TokenAuthenticatable {
   typealias TokenType = UserToken
+
+  // Override the default implementation...
+  public static func authenticate(token:TokenType, on conn:DatabaseConnectable)
+      -> Future<User?> {
+    return token.valid
+         ? token.authUser.get(on:conn).map { $0 }
+         : Future.map(on:conn) { nil }
+  }
 }
 
 extension User: Migration { }

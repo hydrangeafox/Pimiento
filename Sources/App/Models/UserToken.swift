@@ -5,15 +5,22 @@ final class UserToken: SQLiteModel {
   var id:      Int?
   var userid:  User.ID
   var content: String
+  var expires: Date
 
-  init(id:Int?=nil, userid:User.ID, content:String) {
+  var valid: Bool {
+    return Date() < self.expires
+  }
+
+  init(id:Int?=nil, userid:User.ID, content:String, expires:Date) {
     self.id      = id
     self.userid  = userid
     self.content = content
+    self.expires = expires
   }
-  convenience init?(user:User, uuid:UUID=UUID()) {
+  convenience init?(user:User, uuid:UUID=UUID(), ttl:TimeInterval=3600) {
     guard let userid = user.id else { return nil }
-    self.init(userid:userid, content:uuid.uuidString)
+    let expires = Date(timeIntervalSinceNow:ttl)
+    self.init(userid:userid, content:uuid.uuidString, expires:expires)
   }
 }
 
