@@ -24,6 +24,13 @@ final class UserToken: SQLiteModel {
   }
 }
 
+extension UserToken {
+  static func sweep(on conn:DatabaseConnectable) -> Future<Void> {
+    return UserToken.query(on:conn)
+                    .filter(\.expires<Date()).delete(force:true)
+  }
+}
+
 extension UserToken: Token {
   typealias UserType = User
 
