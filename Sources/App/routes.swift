@@ -36,6 +36,7 @@ public func routes(_ router: Router) throws {
 
     // Endpoint for our main contents
     let guardian = User.guardAuthMiddleware()
-    try router.grouped("photos").grouped(bearer,guardian)
-        .register(collection:PhotoCollection())
+    let signed   = router.grouped(bearer,guardian)
+    try signed.grouped("events").register(collection:EventCollection())
+    try signed.grouped("photos").register(collection:PhotoCollection())
 }
