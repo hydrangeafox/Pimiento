@@ -8,5 +8,9 @@ final class EventCollection: RouteCollection {
       }
       return Event(name:manifest.name, ownerid:userid).save(on:req)
     }
+    router.get(Event.parameter) { req -> Future<Event> in
+      // FIXME: Register this route with access control middlewares!
+      try req.parameters.next(Event.self)
+    }
   }
 }

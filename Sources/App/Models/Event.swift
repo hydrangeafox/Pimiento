@@ -13,6 +13,18 @@ final class Event: SQLiteModel {
   }
 }
 
+extension Event: Parameter {
+  typealias ResolvedParameter = Future<Event>
+
+  static func resolveParameter(
+      _ param:String, on container:Container) throws -> ResolvedParameter {
+    guard let id = Int(param) else { throw Abort(.badRequest) }
+    return container.withPooledConnection(to:.sqlite) { conn in
+      return Event.find(id, on:conn).unwrap(or:Abort(.notFound))
+    }
+  }
+}
+
 extension Event: Content { }
 
 extension Event: Migration { }
