@@ -12,5 +12,12 @@ final class EventCollection: RouteCollection {
       // FIXME: Register this route with access control middlewares!
       try req.parameters.next(Event.self)
     }
+    router.put(
+        EventManifest.self, at:Event.parameter) { req,mf -> Future<Event> in
+      // FIXME: Register this route with access control middlewares!
+      try req.parameters.next(Event.self).flatMap(to:Event.self) {
+        $0.replace(with:mf).save(on:req)
+      }
+    }
   }
 }

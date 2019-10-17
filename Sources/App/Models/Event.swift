@@ -11,6 +11,10 @@ final class Event: SQLiteModel {
     self.name    = name
     self.ownerid = ownerid
   }
+  func replace(with content:EventManifest) -> Event {
+    self.name = content.name
+    return self
+  }
 }
 
 extension Event: Parameter {
