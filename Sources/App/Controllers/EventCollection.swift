@@ -19,5 +19,11 @@ final class EventCollection: RouteCollection {
         $0.replace(with:mf).save(on:req)
       }
     }
+    router.delete(Event.parameter) { req -> Future<HTTPStatus> in
+      // FIXME: Register this route with access control middlewares!
+      try req.parameters.next(Event.self)
+        .flatMap { $0.delete(force:true, on:req) }
+        .transform(to:.noContent)
+    }
   }
 }
