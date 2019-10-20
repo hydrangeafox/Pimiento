@@ -39,4 +39,16 @@ extension User: TokenAuthenticatable {
   }
 }
 
+extension User: Parameter {
+  typealias ResolvedParameter = Future<User>
+
+  static func resolveParameter(
+      _ param:String, on container:Container) throws -> ResolvedParameter {
+    guard let id = Int(param) else { throw Abort(.badRequest) }
+    return container.withPooledConnection(to:.sqlite) { conn in
+      User.find(id, on:conn).unwrap(or:Abort(.notFound))
+    }
+  }
+}
+
 extension User: Migration { }

@@ -17,6 +17,12 @@ final class Event: SQLiteModel {
   }
 }
 
+extension Event {
+  var users: Siblings<Event,User,EventUser> {
+    return self.siblings()
+  }
+}
+
 extension Event: Parameter {
   typealias ResolvedParameter = Future<Event>
 
