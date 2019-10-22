@@ -18,5 +18,13 @@ final class EventUserCollection: RouteCollection {
         event.users.isAttached(user, on:req)
       }
     }
+    router.delete(User.parameter) { req -> Future<HTTPStatus> in
+      // FIXME: Register this route with access control middlewares!
+      let event = try req.parameters.next(Event.self)
+      let user  = try req.parameters.next(User.self)
+      return flatMap(to:HTTPStatus.self, event,user) { event,user in
+        event.users.detach(user, on:req).transform(to:.noContent)
+      }
+    }
   }
 }
