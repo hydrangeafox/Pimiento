@@ -41,4 +41,6 @@ public func routes(_ router: Router) throws {
     try signed.grouped("events").register(collection:EventCollection())
     try signed.grouped("events",Event.parameter,"users")
               .register(collection:LinkableCollection<EventUser>())
+    try signed.grouped("events",Event.parameter,"photos")
+              .register(collection:LinkableCollection<EventPhoto>())
 }

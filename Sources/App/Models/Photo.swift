@@ -1,5 +1,6 @@
 import FluentSQLite
 import MagickWand
+import Vapor
 
 final class Photo: SQLiteModel {
   var id:       Int?
@@ -26,6 +27,18 @@ final class Photo: SQLiteModel {
     return DownloadableContent(
       location:self.location, filename:self.filename
     )
+  }
+}
+
+extension Photo: Parameter {
+  typealias ResolvedParameter = Future<Photo>
+
+  static func resolveParameter(
+      _ param:String, on container:Container) throws -> ResolvedParameter {
+    guard let id = Int(param) else { throw Abort(.badRequest) }
+    return container.withPooledConnection(to:.sqlite) { conn in
+      Photo.find(id, on:conn).unwrap(or:Abort(.notFound))
+    }
   }
 }
 
