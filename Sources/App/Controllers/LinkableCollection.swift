@@ -17,7 +17,7 @@ final class LinkableCollection<T>: RouteCollection where T:ModifiablePivot,
           .attach($1, on:req).transform(to:.created)
       }
     }
-    router.get(T.Right.parameter) { req -> Future<Bool> in
+    router.on(.OPTIONS, at:T.Right.parameter) { req -> Future<Bool> in
       // TODO: This route exists just for our testing!
       let binder = try req.parameters.next(T.Left.self)
       let entity = try req.parameters.next(T.Right.self)
