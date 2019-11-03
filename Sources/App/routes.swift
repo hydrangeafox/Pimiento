@@ -47,6 +47,7 @@ public func routes(_ router: Router) throws {
     // TODO: This route exists just for our testing!
     signed
     .grouped(MembershipMiddleware<EventUser>.self)
+    .grouped(EntityMiddleware<EventPhoto>.self)
     .grouped("events",Event.parameter)
         .get("photos",Photo.parameter) { req -> Future<DownloadableContent> in
       let _     = try req.parameters.next(Event.self)
