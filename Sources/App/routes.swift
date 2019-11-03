@@ -43,4 +43,14 @@ public func routes(_ router: Router) throws {
               .register(collection:LinkableCollection<EventUser>())
     try signed.grouped("events",Event.parameter,"photos")
               .register(collection:LinkableCollection<EventPhoto>())
+
+    // TODO: This route exists just for our testing!
+    signed
+    .grouped(MembershipMiddleware<EventUser>.self)
+    .grouped("events",Event.parameter)
+        .get("photos",Photo.parameter) { req -> Future<DownloadableContent> in
+      let _     = try req.parameters.next(Event.self)
+      let photo = try req.parameters.next(Photo.self)
+      return photo.map(to:DownloadableContent.self) { $0.packet() }
+    }
 }
