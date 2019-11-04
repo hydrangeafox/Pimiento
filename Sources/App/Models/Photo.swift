@@ -6,19 +6,24 @@ final class Photo: SQLiteModel {
   var id:       Int?
   var digest:   String
   var filename: String
+  var ownerid:  User.ID
 
   var location: URL {
     return URL.location(self.digest)
   }
 
-  init(id:Int? = nil, digest:String, filename:String) {
+  init(id:Int?=nil, digest:String, filename:String, ownerid:User.ID) {
     self.id       = id
     self.digest   = digest
     self.filename = filename
+    self.ownerid  = ownerid
   }
-  convenience init?(file:File) {
-    guard let digest = file.data.digest else { return nil }
-    self.init(digest:digest, filename:file.filename)
+  convenience init?(file:File, by owner:User) {
+    guard let digest = file.data.digest,
+          let uid    = owner.id else {
+      return nil
+    }
+    self.init(digest:digest, filename:file.filename, ownerid:uid)
   }
   func wand() -> ImageWand? {
     return ImageWand(filePath:self.location.path)
@@ -43,3 +48,4 @@ extension Photo: Parameter {
 }
 
 extension Photo: Migration { }
+extension Photo: Ownership { }

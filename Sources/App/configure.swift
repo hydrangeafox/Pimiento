@@ -19,6 +19,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     middlewares.use(ErrorMiddleware.self) // Catches errors and converts to HTTP response
     services.register(middlewares)
     services.register(OwnershipMiddleware<Event>.self)
+    services.register(OwnershipMiddleware<Photo>.self)
     services.register(MembershipMiddleware<EventUser>.self)
     services.register(EntityMiddleware<EventPhoto>.self)
 

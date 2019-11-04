@@ -42,7 +42,8 @@ public func routes(_ router: Router) throws {
     try signed.grouped("events").register(collection:EventCollection())
     try owned .grouped("events",Event.parameter,"users")
               .register(collection:LinkableCollection<EventUser>())
-    try owned .grouped("events",Event.parameter,"photos")
+    try owned .grouped(OwnershipMiddleware<Photo>.self)
+              .grouped("events",Event.parameter,"photos")
               .register(collection:LinkableCollection<EventPhoto>())
 
     // TODO: This route exists just for our testing!

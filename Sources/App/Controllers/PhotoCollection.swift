@@ -8,7 +8,8 @@ final class PhotoCollection: RouteCollection {
        .flatMap(to:File.self) { formdata in
         formdata.image.write(on:req)
       }.flatMap(to:Photo.self) { file in
-        guard let photo = Photo(file:file) else {
+        guard let user  = try req.authenticated(User.self),
+              let photo = Photo(file:file, by:user) else {
           throw Abort(.internalServerError)
         }
         return photo.create(on:req)
