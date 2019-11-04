@@ -30,5 +30,5 @@ extension Event: Parameter {
 }
 
 extension Event: Content { }
-
 extension Event: Migration { }
+extension Event: Ownership { }

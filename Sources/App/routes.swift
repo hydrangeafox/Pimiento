@@ -37,11 +37,12 @@ public func routes(_ router: Router) throws {
     // Endpoint for our main contents
     let guardian = User.guardAuthMiddleware()
     let signed   = router.grouped(bearer,guardian)
+    let owned    = signed.grouped(OwnershipMiddleware<Event>.self)
     try signed.grouped("photos").register(collection:PhotoCollection())
     try signed.grouped("events").register(collection:EventCollection())
-    try signed.grouped("events",Event.parameter,"users")
+    try owned .grouped("events",Event.parameter,"users")
               .register(collection:LinkableCollection<EventUser>())
-    try signed.grouped("events",Event.parameter,"photos")
+    try owned .grouped("events",Event.parameter,"photos")
               .register(collection:LinkableCollection<EventPhoto>())
 
     // TODO: This route exists just for our testing!
