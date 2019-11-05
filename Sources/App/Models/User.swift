@@ -18,6 +18,12 @@ final class User: SQLiteModel {
   }
 }
 
+extension User {
+  var events: Siblings<User,Event,EventUser> {
+    return self.siblings()
+  }
+}
+
 extension User: PasswordAuthenticatable {
   static var usernameKey: WritableKeyPath<User,String> {
     return \.name
