@@ -57,4 +57,14 @@ extension User: Parameter {
   }
 }
 
+extension User: Renderable {
+  struct RenderableContent: Content {
+    let id:   User.ID?
+    let name: String
+  }
+  var renderable: RenderableContent {
+    return RenderableContent(id:self.id, name:self.name)
+  }
+}
+
 extension User: Migration { }

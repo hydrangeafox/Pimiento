@@ -47,5 +47,16 @@ extension Photo: Parameter {
   }
 }
 
+extension Photo: Renderable {
+  struct RenderableContent: Content {
+    let id:       Photo.ID?
+    let filename: String
+    let ownerid:  User.ID
+  }
+  var renderable: RenderableContent {
+    return RenderableContent(id:id, filename:filename, ownerid:ownerid)
+  }
+}
+
 extension Photo: Migration { }
 extension Photo: Ownership { }
