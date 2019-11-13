@@ -18,5 +18,13 @@ final class PreferenceCollection<T>: RouteCollection where T:ModifiablePivot,
             .attach($0, on:req).transform(to:.created)
       }
     }
+    router.get(T.Right.parameter) { req -> Future<Bool> in
+      // FIXME: Register this route with access control middlewares!
+      let user   = try req.requireAuthenticated(T.Left.self)
+      let entity = try req.parameters.next(T.Right.self)
+      return entity.flatMap(to:Bool.self) {
+        user.siblings(through:T.self).isAttached($0, on:req)
+      }
+    }
   }
 }
