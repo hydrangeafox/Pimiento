@@ -50,7 +50,8 @@ public func routes(_ router: Router) throws {
     try owned  .grouped(OwnershipMiddleware<Photo>.self)
                .grouped("events",Event.parameter,"photos")
                .register(collection:LinkableCollection<EventPhoto>())
-    try signed .grouped("favorites")
+    try signed .grouped(CoordinatorMiddleware<EventUser,EventPhoto>())
+               .grouped("favorites")
                .register(collection:PreferenceCollection<Favorite>())
 
     // TODO: This route exists just for our testing!

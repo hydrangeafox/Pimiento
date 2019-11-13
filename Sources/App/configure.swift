@@ -22,6 +22,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     services.register(OwnershipMiddleware<Photo>.self)
     services.register(MembershipMiddleware<EventUser>.self)
     services.register(EntityMiddleware<EventPhoto>.self)
+    services.register(CoordinatorMiddleware<EventUser,EventPhoto>.self)
 
     // Configure a SQLite database
     let sqlite = try SQLiteDatabase(storage: .memory)
