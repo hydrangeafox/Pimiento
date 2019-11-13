@@ -26,5 +26,14 @@ final class PreferenceCollection<T>: RouteCollection where T:ModifiablePivot,
         user.siblings(through:T.self).isAttached($0, on:req)
       }
     }
+    router.delete(T.Right.parameter) { req -> Future<HTTPStatus> in
+      // FIXME: Register this route with access control middlewares!
+      let user   = try req.requireAuthenticated(T.Left.self)
+      let entity = try req.parameters.next(T.Right.self)
+      return entity.flatMap(to:HTTPStatus.self) {
+        user.siblings(through:T.self)
+            .detach($0, on:req).transform(to:.noContent)
+      }
+    }
   }
 }
