@@ -41,6 +41,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model:EventUser.self, database:.sqlite)
     migrations.add(model:EventPhoto.self,database:.sqlite)
     migrations.add(model:Favorite.self,  database:.sqlite)
+    migrations.add(model:Comment.self,   database:.sqlite)
     migrations.add(model:Photo.self,     database:.sqlite)
     migrations.add(migration:SeedUsers.self, database:.sqlite)
     services.register(migrations)

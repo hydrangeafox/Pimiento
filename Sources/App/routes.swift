@@ -53,6 +53,8 @@ public func routes(_ router: Router) throws {
     try signed .grouped(CoordinatorMiddleware<EventUser,EventPhoto>())
                .grouped("favorites")
                .register(collection:PreferenceCollection<Favorite>())
+    try signed .grouped("photos",Photo.parameter,"comments")
+               .register(collection:CommentCollection())
 
     // TODO: This route exists just for our testing!
     signed
