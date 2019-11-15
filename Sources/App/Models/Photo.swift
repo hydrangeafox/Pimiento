@@ -35,6 +35,12 @@ final class Photo: SQLiteModel {
   }
 }
 
+extension Photo {
+  var comments: Children<Photo,Comment> {
+    return self.children(\.photoid)
+  }
+}
+
 extension Photo: Parameter {
   typealias ResolvedParameter = Future<Photo>
 

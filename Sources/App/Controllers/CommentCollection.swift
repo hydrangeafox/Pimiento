@@ -11,5 +11,11 @@ final class CommentCollection: RouteCollection {
                .save(on:req)
       }
     }
+    router.get() { req -> Future<[Comment]> in
+      let photo = try req.parameters.next(Photo.self)
+      return photo.flatMap(to:[Comment].self) {
+        try $0.comments.query(on:req).sort(\.id).all()
+      }
+    }
   }
 }
