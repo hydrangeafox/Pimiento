@@ -15,11 +15,10 @@ final class PhotoCollection: RouteCollection {
         return photo.create(on:req)
       }.transform(to:.created)
     }
-    router.get(Int.parameter) { req -> Future<ImageWand> in
-      let id = try req.parameters.next(Int.self)
-      return Photo.find(id, on:req).map(to:ImageWand.self) {
-        guard let photo = $0 else { throw Abort(.notFound) }
-        guard let wand  = photo.wand() else {
+    router.get(Photo.parameter) { req -> Future<ImageWand> in
+      let photo = try req.parameters.next(Photo.self)
+      return photo.map(to:ImageWand.self) {
+        guard let wand = $0.wand() else {
           throw Abort(.internalServerError)
         }
         // We don't use optional chain because we need to separate
@@ -30,13 +29,10 @@ final class PhotoCollection: RouteCollection {
         return wand
       }
     }
-    router.get(Int.parameter,"download") {
-               req -> Future<DownloadableContent> in
-      let id = try req.parameters.next(Int.self)
-      return Photo.find(id, on:req).map(to:DownloadableContent.self) {
-        guard let content = $0?.packet() else { throw Abort(.notFound) }
-        return content
-      }
+    router.get(
+        Photo.parameter,"download") { req -> Future<DownloadableContent> in
+      let photo = try req.parameters.next(Photo.self)
+      return photo.map(to:DownloadableContent.self) { $0.packet() }
     }
   }
 }
