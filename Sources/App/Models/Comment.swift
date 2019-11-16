@@ -19,6 +19,18 @@ final class Comment: SQLiteModel {
   }
 }
 
+extension Comment: Parameter {
+  typealias ResolvedParameter = Future<Comment>
+
+  static func resolveParameter(
+      _ param:String, on container:Container) throws -> ResolvedParameter {
+    guard let id = Int(param) else { throw Abort(.badRequest) }
+    return container.withPooledConnection(to:.sqlite) { conn in
+      Comment.find(id, on:conn).unwrap(or:Abort(.notFound))
+    }
+  }
+}
+
 extension Comment: Content { }
 extension Comment: Migration { }
 extension Comment: Ownership { }

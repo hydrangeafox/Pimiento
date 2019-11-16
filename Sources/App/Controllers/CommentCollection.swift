@@ -6,6 +6,8 @@ final class CommentCollection: RouteCollection {
   // - Continue to use the `CoordinatorMiddleware`
   // - We may introduce a composite key on the `Comment` model
   func boot(router:Router) {
+    let parental
+      = router.grouped(ParentalMiddleware<Comment,Photo>(\.photoid))
     router.post(CommentManifest.self) { req,manifest -> Future<Comment> in
       let user  = try req.requireAuthenticated(User.self)
       let photo = try req.parameters.next(Photo.self)
@@ -21,26 +23,18 @@ final class CommentCollection: RouteCollection {
         try $0.comments.query(on:req).sort(\.id).all()
       }
     }
-    router.put(CommentManifest.self, at:Int.parameter) { req,manifest
+    parental.put(CommentManifest.self, at:Comment.parameter) { req,manifest
         -> Future<Comment> in
-      let photo = try req.parameters.next(Photo.self)
-      let cid   = try req.parameters.next(Int.self)
-      return photo.flatMap(to:Comment.self) {
-        try $0.comments.query(on:req)
-              .filter(Comment.idKey,.equal,Int?(cid)).first()
-              .unwrap(or:Abort(.notFound))
-      }.flatMap(to:Comment.self) {
+      let _       = try req.parameters.next(Photo.self)
+      let comment = try req.parameters.next(Comment.self)
+      return comment.flatMap(to:Comment.self) {
         $0.replace(with:manifest).save(on:req)
       }
     }
-    router.delete(Int.parameter) { req -> Future<HTTPStatus> in
-      let photo = try req.parameters.next(Photo.self)
-      let cid   = try req.parameters.next(Int.self)
-      return photo.flatMap(to:Comment.self) {
-        try $0.comments.query(on:req)
-              .filter(Comment.idKey,.equal,Int?(cid)).first()
-              .unwrap(or:Abort(.notFound))
-      }.flatMap(to:HTTPStatus.self) {
+    parental.delete(Comment.parameter) { req -> Future<HTTPStatus> in
+      let _       = try req.parameters.next(Photo.self)
+      let comment = try req.parameters.next(Comment.self)
+      return comment.flatMap(to:HTTPStatus.self) {
         $0.delete(force:true, on:req).transform(to:.noContent)
       }
     }
