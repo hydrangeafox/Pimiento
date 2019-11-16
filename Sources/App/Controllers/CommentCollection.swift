@@ -33,5 +33,16 @@ final class CommentCollection: RouteCollection {
         $0.replace(with:manifest).save(on:req)
       }
     }
+    router.delete(Int.parameter) { req -> Future<HTTPStatus> in
+      let photo = try req.parameters.next(Photo.self)
+      let cid   = try req.parameters.next(Int.self)
+      return photo.flatMap(to:Comment.self) {
+        try $0.comments.query(on:req)
+              .filter(Comment.idKey,.equal,Int?(cid)).first()
+              .unwrap(or:Abort(.notFound))
+      }.flatMap(to:HTTPStatus.self) {
+        $0.delete(force:true, on:req).transform(to:.noContent)
+      }
+    }
   }
 }
