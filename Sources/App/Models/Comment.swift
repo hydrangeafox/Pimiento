@@ -13,6 +13,10 @@ final class Comment: SQLiteModel {
     self.photoid = photoid
     self.ownerid = ownerid
   }
+  func replace(with content:CommentManifest) -> Comment {
+    self.message = content.message
+    return self
+  }
 }
 
 extension Comment: Content { }
