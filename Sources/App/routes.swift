@@ -39,6 +39,8 @@ public func routes(_ router: Router) throws {
     let signed   = router.grouped(bearer,guardian)
     let invited  = signed.grouped(MembershipMiddleware<EventUser>.self)
     let owned    = signed.grouped(OwnershipMiddleware<Event>.self)
+    let invitee
+      = signed .grouped(CoordinatorMiddleware<EventUser,EventPhoto>())
     try signed .grouped("photos").register(collection:PhotoCollection())
     try signed .grouped("events").register(collection:EventCollection())
     try invited.grouped("events",Event.parameter,"users")
@@ -50,10 +52,9 @@ public func routes(_ router: Router) throws {
     try owned  .grouped(OwnershipMiddleware<Photo>.self)
                .grouped("events",Event.parameter,"photos")
                .register(collection:LinkableCollection<EventPhoto>())
-    try signed .grouped(CoordinatorMiddleware<EventUser,EventPhoto>())
-               .grouped("favorites")
+    try invitee.grouped("favorites")
                .register(collection:PreferenceCollection<Favorite>())
-    try signed .grouped("photos",Photo.parameter,"comments")
+    try invitee.grouped("photos",Photo.parameter,"comments")
                .register(collection:CommentCollection())
 
     // TODO: This route exists just for our testing!
