@@ -20,6 +20,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     services.register(middlewares)
     services.register(OwnershipMiddleware<Event>.self)
     services.register(OwnershipMiddleware<Photo>.self)
+    services.register(OwnershipMiddleware<Comment>.self)
     services.register(MembershipMiddleware<EventUser>.self)
     services.register(EntityMiddleware<EventPhoto>.self)
     services.register(CoordinatorMiddleware<EventUser,EventPhoto>.self)

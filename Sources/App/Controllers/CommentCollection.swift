@@ -6,8 +6,9 @@ final class CommentCollection: RouteCollection {
   // - Continue to use the `CoordinatorMiddleware`
   // - We may introduce a composite key on the `Comment` model
   func boot(router:Router) {
-    let parental
-      = router.grouped(ParentalMiddleware<Comment,Photo>(\.photoid))
+    let owned = router
+      .grouped(ParentalMiddleware<Comment,Photo>(\.photoid))
+      .grouped(OwnershipMiddleware<Comment>.self)
     router.post(CommentManifest.self) { req,manifest -> Future<Comment> in
       let user  = try req.requireAuthenticated(User.self)
       let photo = try req.parameters.next(Photo.self)
@@ -23,7 +24,7 @@ final class CommentCollection: RouteCollection {
         try $0.comments.query(on:req).sort(\.id).all()
       }
     }
-    parental.put(CommentManifest.self, at:Comment.parameter) { req,manifest
+    owned.put(CommentManifest.self, at:Comment.parameter) { req,manifest
         -> Future<Comment> in
       let _       = try req.parameters.next(Photo.self)
       let comment = try req.parameters.next(Comment.self)
@@ -31,7 +32,7 @@ final class CommentCollection: RouteCollection {
         $0.replace(with:manifest).save(on:req)
       }
     }
-    parental.delete(Comment.parameter) { req -> Future<HTTPStatus> in
+    owned.delete(Comment.parameter) { req -> Future<HTTPStatus> in
       let _       = try req.parameters.next(Photo.self)
       let comment = try req.parameters.next(Comment.self)
       return comment.flatMap(to:HTTPStatus.self) {
