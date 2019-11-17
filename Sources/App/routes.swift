@@ -52,7 +52,7 @@ public func routes(_ router: Router) throws {
     try owned  .grouped(OwnershipMiddleware<Photo>.self)
                .grouped("events",Event.parameter,"photos")
                .register(collection:LinkableCollection<EventPhoto>())
-    try invitee.grouped("favorites")
+    try invitee.grouped("photos")
                .register(collection:PreferenceCollection<Favorite>())
     try invitee.grouped("photos",Photo.parameter,"comments")
                .register(collection:CommentCollection())
