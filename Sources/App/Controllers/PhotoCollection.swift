@@ -35,6 +35,13 @@ final class PhotoCollection: RouteCollection {
       }
     }
     router.get(
+        Photo.parameter,"thumbnail") { req -> Future<Thumbnail> in
+      let photo = try req.parameters.next(Photo.self)
+      return photo.flatMap(to:Thumbnail.self) {
+        try $0.thumbnails.query(on:req).first().unwrap(or:Abort(.notFound))
+      }
+    }
+    router.get(
         Photo.parameter,"download") { req -> Future<DownloadableContent> in
       let photo = try req.parameters.next(Photo.self)
       return photo.map(to:DownloadableContent.self) { $0.packet() }

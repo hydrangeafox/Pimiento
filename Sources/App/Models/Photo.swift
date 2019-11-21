@@ -40,6 +40,10 @@ final class Photo: SQLiteModel {
 
 // MARK: - Thumbnail
 extension Photo {
+  var thumbnails: Children<Photo,Thumbnail> {
+    return self.children(\.id)
+  }
+
   // This method ensures that the content has been stored correctly.
   func thumbnail(height h:Double=120.0, quality q:Int=25) -> Thumbnail? {
     if let id    = self.id,
