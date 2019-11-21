@@ -13,6 +13,11 @@ final class PhotoCollection: RouteCollection {
           throw Abort(.internalServerError)
         }
         return photo.create(on:req)
+      }.flatMap(to:Thumbnail.self) { photo in
+        guard let thumbnail = photo.thumbnail() else {
+          throw Abort(.internalServerError)
+        }
+        return thumbnail.create(on:req)
       }.transform(to:.created)
     }
     router.get(Photo.parameter) { req -> Future<ImageWand> in

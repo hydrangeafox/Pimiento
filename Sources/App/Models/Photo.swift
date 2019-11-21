@@ -2,6 +2,9 @@ import FluentSQLite
 import MagickWand
 import Vapor
 
+// We use `MagickWand` because it has `ImageWand.autoOrient()`.
+// `SwiftGD` is a good alternative because it has filter and drawing
+// methods. However we need above feature to support digital cameras.
 final class Photo: SQLiteModel {
   var id:       Int?
   var digest:   String
@@ -35,6 +38,20 @@ final class Photo: SQLiteModel {
   }
 }
 
+// MARK: - Thumbnail
+extension Photo {
+  // This method ensures that the content has been stored correctly.
+  func thumbnail(height h:Double=120.0, quality q:Int=25) -> Thumbnail? {
+    if let id    = self.id,
+       let image = self.wand()?.thumbnailed(height:h, quality:q).data {
+      return Thumbnail(id:id, image:image)
+    } else {
+      return nil
+    }
+  }
+}
+
+// MARK: - Comment
 extension Photo {
   var comments: Children<Photo,Comment> {
     return self.children(\.photoid)
