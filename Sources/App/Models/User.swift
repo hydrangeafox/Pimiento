@@ -16,6 +16,10 @@ final class User: SQLiteModel {
     let hashedpw = try BCrypt.hash(password)
     self.init(id:id, name:name, hashedpw:hashedpw)
   }
+  func replace(with content:UserManifest) throws -> Self {
+    self.hashedpw = try BCrypt.hash(content.password)
+    return self
+  }
 }
 
 extension User {

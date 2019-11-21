@@ -41,6 +41,7 @@ public func routes(_ router: Router) throws {
     let owned    = signed.grouped(OwnershipMiddleware<Event>.self)
     let invitee
       = signed .grouped(CoordinatorMiddleware<EventUser,EventPhoto>())
+    try signed .grouped("users") .register(collection:UserCollection())
     try signed .grouped("photos").register(collection:PhotoCollection())
     try signed .grouped("events").register(collection:EventCollection())
     try invited.grouped("events",Event.parameter,"users")
