@@ -1,8 +1,11 @@
 import Foundation
+import Service
 
 extension URL {
-  static var repository = URL(
-    fileURLWithPath:"/Users/demifox/Pictures/Pimiento", isDirectory:true
+  static let home = Environment.get("PIMIENTO_HOME")
+                 ?? "/var/lib/pimiento"
+  static let repository = URL(
+    fileURLWithPath:"\(URL.home)/repository", isDirectory:true
   )
   static func +(_ left:URL, _ right:String) -> URL {
     return left.appendingPathComponent(right, isDirectory:false)
