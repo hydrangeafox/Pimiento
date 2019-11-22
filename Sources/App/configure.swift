@@ -26,7 +26,9 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     services.register(CoordinatorMiddleware<EventUser,EventPhoto>.self)
 
     // Configure a SQLite database
-    let sqlite = try SQLiteDatabase(storage: .memory)
+    let sqlite = try SQLiteDatabase(storage:env == .development
+               ? .memory : .file(path:"\(URL.home)/pimiento.db")
+    )
 
     /// Register the configured SQLite database to the database config.
     var databases = DatabasesConfig()
