@@ -28,4 +28,4 @@ extension EventUser: ModifiablePivot {
   }
 }
 
-extension EventUser: Migration { }
+extension EventUser: SQLiteMigration, LinkableMigration { }
