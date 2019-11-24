@@ -10,6 +10,9 @@ final class CommentCollection: RouteCollection {
       .grouped(ParentalMiddleware<Comment,Photo>(\.photoid))
       .grouped(OwnershipMiddleware<Comment>.self)
     router.post(CommentManifest.self) { req,manifest -> Future<Comment> in
+      guard manifest.message.count <= 140 else {
+        throw Abort(.payloadTooLarge)
+      }
       let user  = try req.requireAuthenticated(User.self)
       let photo = try req.parameters.next(Photo.self)
       return photo.flatMap(to:Comment.self) {
