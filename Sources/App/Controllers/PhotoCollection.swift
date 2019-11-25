@@ -26,6 +26,9 @@ final class PhotoCollection: RouteCollection {
         guard let wand = $0.wand() else {
           throw Abort(.internalServerError)
         }
+        if let width = req.query[Double.self, at:"width"] {
+          wand.scale(width:width)
+        }
         // We don't use optional chain because we need to separate
         // response status for each causes.
         let mediaType = req.http.headers.accept(for:"image").first
