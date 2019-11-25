@@ -23,7 +23,7 @@ final class PhotoCollection: RouteCollection {
     router.get(Photo.parameter) { req -> Future<ImageWand> in
       let photo = try req.parameters.next(Photo.self)
       return photo.map(to:ImageWand.self) {
-        guard let wand = $0.wand() else {
+        guard let wand = $0.wand(), wand.autoOrient() else {
           throw Abort(.internalServerError)
         }
         if let width = req.query[Double.self, at:"width"] {
